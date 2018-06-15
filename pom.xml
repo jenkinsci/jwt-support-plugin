@@ -28,6 +28,12 @@
     </developer>
   </developers>
 
+  <scm>
+    <connection>scm:git:ssh://github.com/jenkinsci/jwt-support-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/jwt-support-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/jwt-support-plugin</url>
+  </scm>
+
   <properties>
       <java.level>8</java.level>
       <jenkins.version>2.107.2</jenkins.version>
