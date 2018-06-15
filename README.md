@@ -1,8 +1,8 @@
-# BlueOcean JWT Plugin
+# JWT Support Plugin
 
 This plugin provides JWT authenticated related APIs. JWT token is signed using RSA256 algorithm. This is asymmetric 
 algorithm, this means the token is signed using the private key and Client must use corresponding public key to verify 
-the claims. 
+the claims. It is forked from the Bluesteel-JWT plugin, but removes dependency on bluesteel and its lifecycle
 
 # APIs
 

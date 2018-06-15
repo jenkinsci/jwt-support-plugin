@@ -3,35 +3,58 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.jenkins.blueocean</groupId>
-    <artifactId>blueocean-parent</artifactId>
-    <version>1.6.0-beta-4-SNAPSHOT</version>
+    <groupId>org.jenkins-ci.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>3.6</version>
   </parent>
 
-  <artifactId>blueocean-jwt</artifactId>
+  <artifactId>jwt-support</artifactId>
   <packaging>hpi</packaging>
 
-  <name>JWT for Blue Ocean</name>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/Blue+Ocean+Plugin</url>
+  <name>JWT Support Plugin</name>
+  <description>Allows generation of a Jenkins-signed JWT to be used as an access token for API calls</description>
+  <url>https://wiki.jenkins-ci.org/display/JENKINS/JWT-Support-Plugin</url>
+  <developers>
+    <developer>
+      <id>agentgonzo</id>
+      <name>Steve Arch</name>
+    </developer>
+    <developer>
+      <id>vivek</id>
+      <name>Vivek Pandey</name>
+        <roles>
+          <role>Original author for blueocean</role>
+        </roles>
+    </developer>
+  </developers>
+
+  <properties>
+      <java.level>8</java.level>
+      <jenkins.version>2.107.2</jenkins.version>
+  </properties>
 
   <dependencies>
       <dependency>
           <groupId>org.bitbucket.b_c</groupId>
           <artifactId>jose4j</artifactId>
+          <version>0.6.0</version>
       </dependency>
       <dependency>
-          <groupId>${project.groupId}</groupId>
+          <groupId>io.jenkins.blueocean</groupId>
           <artifactId>blueocean-commons</artifactId>
+          <version>1.5.0</version>
       </dependency>
 
       <dependency>
           <groupId>org.jenkins-ci.plugins</groupId>
           <artifactId>mailer</artifactId>
+          <version>1.21</version>
       </dependency>
 
       <dependency>
           <groupId>joda-time</groupId>
           <artifactId>joda-time</artifactId>
+          <version>2.9.9</version>
       </dependency>
   </dependencies>
 </project>

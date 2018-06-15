@@ -1,0 +1,40 @@
+#Ignore all dot files
+# Warning!
+# Make sure that .npmignore is the same as this, BUT DOES NOT CONTAIN "dist"
+
+node_modules/
+npm-debug.log
+.DS_Store
+.idea/
+.idea.*/
+*.iml
+nbactions.xml
+*.ipr
+*.iws
+**/target/
+*~
+node
+node_modules
+work
+app.properties
+npm-debug.log*
+**/.settings/
+**/.project
+**/.classpath
+blueocean-web/src/main/webapp/assets
+.build_container
+.watch_trigger
+.vscode
+jsconfig.json
+blueocean-core-js/nohup.out
+dist
+reports
+/website/storybook
+/website/component-docs/doc*
+/website-build
+acceptance-tests/runner/.blueocean-ath-jenkins-url
+acceptance-tests/live.properties
+src/main/groovy/pipeline.gdsl
+nb-configuration.xml
+nbactions.xml
+
