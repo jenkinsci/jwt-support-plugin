@@ -45,7 +45,7 @@ public class JwtAuthenticationServiceImplTest {
 
     @Test
     public void getAndUseToken() throws Exception {
-        User user = User.get("alice");
+        User user = User.getById("alice", true);
         user.setFullName("Alice Cooper");
         user.addProperty(new Mailer.UserProperty("alice@jenkins-ci.org"));
 
