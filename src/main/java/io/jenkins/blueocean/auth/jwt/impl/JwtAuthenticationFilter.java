@@ -20,8 +20,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-import static io.jenkins.blueocean.commons.BlueOceanConfigProperties.BLUEOCEAN_FEATURE_JWT_AUTHENTICATION_PROPERTY;
-
 /**
  * {@link Filter} that processes JWT token
  *
@@ -29,6 +27,8 @@ import static io.jenkins.blueocean.commons.BlueOceanConfigProperties.BLUEOCEAN_F
  */
 @Extension
 public class JwtAuthenticationFilter implements Filter {
+
+    public static final String BLUEOCEAN_FEATURE_JWT_AUTHENTICATION_PROPERTY = "BLUEOCEAN_FEATURE_JWT_AUTHENTICATION";
     /**
      * Used to mark requests that had a valid JWT token.
      */
