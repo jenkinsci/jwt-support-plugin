@@ -15,7 +15,8 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 /**
  * Generates JWT token
@@ -81,18 +82,15 @@ public class JwtToken implements HttpResponse {
         rsp.getWriter().write(JsonConverter.toJson(payload));
     }
 
+    @JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
     private static final class OAuthAccessTokenResponse {
-        @JsonProperty("access_token")
         public final String accessToken;
-
-        @JsonProperty("token_type")
-        public final String tokenType = "bearer";
-
-        @JsonProperty("expires_in")
+        public final String tokenType;
         public final int expiresIn; // seconds
 
         private OAuthAccessTokenResponse(String accessToken, int expiresIn) {
             this.accessToken = accessToken;
+            this.tokenType = "bearer";
             this.expiresIn = expiresIn;
         }
     }
