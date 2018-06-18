@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>jwt-support</artifactId>
+  <version>0.5-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <name>JWT Support Plugin</name>
