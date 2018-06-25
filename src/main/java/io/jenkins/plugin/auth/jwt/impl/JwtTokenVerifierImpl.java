@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.jose4j.jws.AlgorithmIdentifiers.RSA_USING_SHA256;
 
@@ -42,27 +43,9 @@ public class JwtTokenVerifierImpl extends JwtTokenVerifier {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenVerifierImpl.class);
 
     @Override
-    public Authentication verify(HttpServletRequest request) {
-        return  validate(request);
-    }
-
-    /**
-     * @return
-     *      null if the JWT token is not present
-     * @throws Exception
-     *      if the JWT token is present but invalid
-     */
-    private @CheckForNull Authentication validate(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            return null;
-        }
-        String token = authHeader.substring("Bearer ".length());
-        JsonWebStructure jws = parse(token);
-        if (jws==null) {
-            return null;
-        }
+    public Optional<Authentication> getAuthenticationFromToken(String token) {
         try {
+            JsonWebStructure jws = JsonWebStructure.fromCompactSerialization(token);
             String alg = jws.getAlgorithmHeaderValue();
             if(alg == null || !alg.equals(RSA_USING_SHA256)){
                 logger.error(String.format("Invalid JWT token: unsupported algorithm in header, found %s, expected %s", alg, RSA_USING_SHA256));
@@ -95,7 +78,7 @@ public class JwtTokenVerifierImpl extends JwtTokenVerifier {
 
                 String subject = claims.getSubject();
                 if(subject.equals("anonymous")) { //if anonymous, we do not bother checking expiration
-                    return Jenkins.ANONYMOUS;
+                    return Optional.of(Jenkins.ANONYMOUS);
                 }else{
                     // If not anonymous user, get Authentication object associated with this claim
                     // We give a change to the authentication store to inspect the claims and if expired it might
@@ -107,9 +90,8 @@ public class JwtTokenVerifierImpl extends JwtTokenVerifier {
                     NumericDate expirationTime = claims.getExpirationTime();
                     if (expirationTime.isBefore(NumericDate.now())){
                         throw new ServiceException.UnauthorizedException("Invalid JWT token: expired");
-
                     }
-                    return authentication;
+                    return Optional.of(authentication);
                 }
 
 

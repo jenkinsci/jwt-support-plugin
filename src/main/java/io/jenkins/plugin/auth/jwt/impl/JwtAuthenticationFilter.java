@@ -8,7 +8,11 @@ import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.context.SecurityContextImpl;
+import org.jose4j.jwx.JsonWebStructure;
+import org.jose4j.lang.JoseException;
 import org.kohsuke.stapler.Stapler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,6 +22,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Optional;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * {@link Filter} that processes JWT token
@@ -26,6 +32,8 @@ import java.io.IOException;
  */
 @Extension
 public class JwtAuthenticationFilter implements Filter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     public static final String BLUEOCEAN_FEATURE_JWT_AUTHENTICATION_PROPERTY = "BLUEOCEAN_FEATURE_JWT_AUTHENTICATION";
     /**
@@ -90,13 +98,21 @@ public class JwtAuthenticationFilter implements Filter {
         }
     }
 
-    private Authentication verifyToken(HttpServletRequest request) {
-        for (JwtTokenVerifier verifier : JwtTokenVerifier.all()) {
-            Authentication token = verifier.verify(request);
-            if (token != null)
-                return token;
+    @VisibleForTesting
+    Authentication verifyToken(HttpServletRequest request) {
+        // Get the token from the request
+        String authHeader = request.getHeader("Authorization");
+        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+            return null;
         }
-        return null;
+        String token = authHeader.substring("Bearer ".length());
+
+        return JwtTokenVerifier.all().stream()
+                .map(verifier -> verifier.getAuthenticationFromToken(token))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
