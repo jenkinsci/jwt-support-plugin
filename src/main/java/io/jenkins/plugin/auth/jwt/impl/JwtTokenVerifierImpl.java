@@ -1,13 +1,13 @@
-package io.jenkins.blueocean.auth.jwt.impl;
+package io.jenkins.plugin.auth.jwt.impl;
 
 import hudson.Extension;
 import hudson.model.User;
-import io.jenkins.blueocean.auth.jwt.JwtAuthenticationStore;
-import io.jenkins.blueocean.auth.jwt.JwtAuthenticationStoreFactory;
-import io.jenkins.blueocean.auth.jwt.JwtSigningKeyProvider;
-import io.jenkins.blueocean.auth.jwt.JwtTokenVerifier;
-import io.jenkins.blueocean.auth.jwt.SigningPublicKey;
-import io.jenkins.blueocean.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.JwtAuthenticationStore;
+import io.jenkins.plugin.auth.jwt.JwtAuthenticationStoreFactory;
+import io.jenkins.plugin.auth.jwt.JwtSigningKeyProvider;
+import io.jenkins.plugin.auth.jwt.JwtTokenVerifier;
+import io.jenkins.plugin.auth.jwt.SigningPublicKey;
+import io.jenkins.plugin.commons.ServiceException;
 import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.GrantedAuthority;

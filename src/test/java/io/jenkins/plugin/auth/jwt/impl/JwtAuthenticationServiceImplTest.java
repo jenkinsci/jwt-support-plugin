@@ -1,4 +1,4 @@
-package io.jenkins.blueocean.auth.jwt.impl;
+package io.jenkins.plugin.auth.jwt.impl;
 
 import com.gargoylesoftware.htmlunit.Page;
 import hudson.model.User;

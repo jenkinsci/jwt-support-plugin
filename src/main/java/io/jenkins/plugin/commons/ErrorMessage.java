@@ -1,4 +1,4 @@
-package io.jenkins.blueocean.commons;
+package io.jenkins.plugin.commons;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

@@ -1,11 +1,11 @@
-package io.jenkins.blueocean.auth.jwt.impl;
+package io.jenkins.plugin.auth.jwt.impl;
 
 import hudson.Extension;
-import io.jenkins.blueocean.auth.jwt.JwtSigningKeyProvider;
-import io.jenkins.blueocean.auth.jwt.JwtToken;
-import io.jenkins.blueocean.auth.jwt.SigningKey;
-import io.jenkins.blueocean.auth.jwt.SigningPublicKey;
-import io.jenkins.blueocean.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.JwtSigningKeyProvider;
+import io.jenkins.plugin.auth.jwt.JwtToken;
+import io.jenkins.plugin.auth.jwt.SigningKey;
+import io.jenkins.plugin.auth.jwt.SigningPublicKey;
+import io.jenkins.plugin.commons.ServiceException;
 
 import java.io.IOException;
 import java.time.Instant;

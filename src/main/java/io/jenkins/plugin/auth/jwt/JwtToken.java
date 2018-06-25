@@ -1,7 +1,7 @@
-package io.jenkins.blueocean.auth.jwt;
+package io.jenkins.plugin.auth.jwt;
 
-import io.jenkins.blueocean.commons.JsonConverter;
-import io.jenkins.blueocean.commons.ServiceException;
+import io.jenkins.plugin.commons.JsonConverter;
+import io.jenkins.plugin.commons.ServiceException;
 import net.sf.json.JSONObject;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;

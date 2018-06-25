@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-  BlueOcean JWT plugin: Enables JWT based BlueOcean API authentication
+  JWT-Support plugin: Enables JWT based API authentication
 </div>

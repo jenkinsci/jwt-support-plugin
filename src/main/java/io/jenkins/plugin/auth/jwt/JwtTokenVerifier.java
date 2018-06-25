@@ -1,8 +1,8 @@
-package io.jenkins.blueocean.auth.jwt;
+package io.jenkins.plugin.auth.jwt;
 
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
-import io.jenkins.blueocean.auth.jwt.impl.JwtTokenVerifierImpl.JwtAuthentication;
+import io.jenkins.plugin.auth.jwt.impl.JwtTokenVerifierImpl.JwtAuthentication;
 import org.acegisecurity.Authentication;
 
 import javax.servlet.http.HttpServletRequest;

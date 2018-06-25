@@ -1,4 +1,4 @@
-package io.jenkins.blueocean.auth.jwt;
+package io.jenkins.plugin.auth.jwt;
 
 import org.acegisecurity.Authentication;
 

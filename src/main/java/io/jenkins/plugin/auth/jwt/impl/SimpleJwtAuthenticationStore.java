@@ -1,8 +1,8 @@
-package io.jenkins.blueocean.auth.jwt.impl;
+package io.jenkins.plugin.auth.jwt.impl;
 
 import hudson.Extension;
-import io.jenkins.blueocean.auth.jwt.JwtAuthenticationStore;
-import io.jenkins.blueocean.auth.jwt.JwtAuthenticationStoreFactory;
+import io.jenkins.plugin.auth.jwt.JwtAuthenticationStore;
+import io.jenkins.plugin.auth.jwt.JwtAuthenticationStoreFactory;
 import net.sf.json.JSONObject;
 import org.acegisecurity.Authentication;
 

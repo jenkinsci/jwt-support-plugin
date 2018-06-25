@@ -1,4 +1,4 @@
-package io.jenkins.blueocean.auth.jwt;
+package io.jenkins.plugin.auth.jwt;
 
 import com.google.common.collect.ImmutableList;
 import hudson.remoting.Base64;
