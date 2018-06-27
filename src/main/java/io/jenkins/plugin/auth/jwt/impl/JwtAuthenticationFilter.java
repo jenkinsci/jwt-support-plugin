@@ -33,7 +33,9 @@ public class JwtAuthenticationFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-    public static final String BLUEOCEAN_FEATURE_JWT_AUTHENTICATION_PROPERTY = "BLUEOCEAN_FEATURE_JWT_AUTHENTICATION";
+    public static final String FEATURE_JWT_AUTHENTICATION_PROPERTY = "FEATURE_JWT_AUTHENTICATION";
+    // Legacy feature flag for toggling this feature when it was part of blueocean
+    public static final String LEGACY_FEATURE_JWT_AUTHENTICATION_PROPERTY = "BLUEOCEAN_FEATURE_JWT_AUTHENTICATION";
     /**
      * Used to mark requests that had a valid JWT token.
      */
@@ -48,14 +50,15 @@ public class JwtAuthenticationFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         /**
-         * Initialize jwt enabled flag by reading BLUEOCEAN_FEATURE_JWT_AUTHENTICATION_PROPERTY jvm property
+         * Initialize jwt enabled flag by reading FEATURE_JWT_AUTHENTICATION_PROPERTY jvm property
          *
-         * {@link io.jenkins.plugin.auth.jwt.commons.BlueOceanConfigProperties.BLUEOCEAN_FEATURE_JWT_AUTHENTICATION} doesn't
+         * {@link io.jenkins.plugin.auth.jwt.commons.BlueOceanConfigProperties.FEATURE_JWT_AUTHENTICATION} doesn't
          * work in certain test scenario - specially when test sets this JVM property to enable JWT but this class has
          * already been loaded setting it to false.
          *
          */
-        this.isJwtEnabled = Boolean.getBoolean(BLUEOCEAN_FEATURE_JWT_AUTHENTICATION_PROPERTY);
+        this.isJwtEnabled = Boolean.getBoolean(FEATURE_JWT_AUTHENTICATION_PROPERTY) ||
+                Boolean.getBoolean(LEGACY_FEATURE_JWT_AUTHENTICATION_PROPERTY);
     }
 
     @Override
