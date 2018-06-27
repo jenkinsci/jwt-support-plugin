@@ -1,6 +1,6 @@
-package io.jenkins.blueocean.auth.jwt.impl;
+package io.jenkins.plugin.auth.jwt.impl;
 
-import io.jenkins.blueocean.auth.jwt.SigningKey;
+import io.jenkins.plugin.auth.jwt.SigningKey;
 import jenkins.security.RSADigitalSignatureConfidentialKey;
 
 import java.io.IOException;

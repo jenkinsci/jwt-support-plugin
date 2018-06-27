@@ -1,10 +1,9 @@
-package io.jenkins.blueocean.auth.jwt;
+package io.jenkins.plugin.auth.jwt;
 
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 
 import javax.annotation.CheckForNull;
-import java.security.interfaces.RSAPublicKey;
 
 /**
  * PublicKey provider, to be used during signing

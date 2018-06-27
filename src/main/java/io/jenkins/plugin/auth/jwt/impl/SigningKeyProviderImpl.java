@@ -1,21 +1,20 @@
-package io.jenkins.blueocean.auth.jwt.impl;
+package io.jenkins.plugin.auth.jwt.impl;
 
 import hudson.Extension;
-import io.jenkins.blueocean.auth.jwt.JwtSigningKeyProvider;
-import io.jenkins.blueocean.auth.jwt.JwtToken;
-import io.jenkins.blueocean.auth.jwt.SigningKey;
-import io.jenkins.blueocean.auth.jwt.SigningPublicKey;
-import io.jenkins.blueocean.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.JwtSigningKeyProvider;
+import io.jenkins.plugin.auth.jwt.JwtToken;
+import io.jenkins.plugin.auth.jwt.SigningKey;
+import io.jenkins.plugin.auth.jwt.SigningPublicKey;
+import io.jenkins.plugin.auth.jwt.commons.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import static java.util.logging.Level.*;
 
 /**
  * Default {@link JwtSigningKeyProvider} that rotates a key over time.
@@ -26,7 +25,7 @@ import static java.util.logging.Level.*;
  */
 @Extension(ordinal = -9999)
 public class SigningKeyProviderImpl extends JwtSigningKeyProvider {
-    private static final Logger LOGGER = Logger.getLogger(SigningKeyProviderImpl.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SigningKeyProviderImpl.class.getName());
     private static final Pattern YYYYMM = Pattern.compile("[0-9]{6}");
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMM").withZone(ZoneOffset.UTC);
 
@@ -52,7 +51,7 @@ public class SigningKeyProviderImpl extends JwtSigningKeyProvider {
                 return null;
             }
         } catch (IOException e) {
-            LOGGER.log(WARNING, String.format("Error reading RSA key for id %s: %s", kid, e.getMessage()), e);
+            LOGGER.warn("Error reading RSA key for id {}: {}", kid, e.getMessage(), e);
             throw new ServiceException.UnexpectedErrorException("Unexpected error: " + e.getMessage(), e);
         }
         return new SigningPublicKey(kid,key.getPublicKey());

@@ -1,4 +1,4 @@
-package io.jenkins.blueocean.commons;
+package io.jenkins.plugin.auth.jwt.commons;
 
 import java.util.ArrayList;
 import java.util.Collection;

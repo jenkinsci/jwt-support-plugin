@@ -1,14 +1,16 @@
-package io.jenkins.blueocean.auth.jwt.impl;
+package io.jenkins.plugin.auth.jwt.impl;
 
 import hudson.Extension;
 import hudson.init.Initializer;
 import hudson.util.PluginServletFilter;
-import io.jenkins.blueocean.auth.jwt.JwtTokenVerifier;
+import io.jenkins.plugin.auth.jwt.JwtTokenVerifier;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.context.SecurityContextImpl;
 import org.kohsuke.stapler.Stapler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,6 +20,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Optional;
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * {@link Filter} that processes JWT token
@@ -26,6 +30,8 @@ import java.io.IOException;
  */
 @Extension
 public class JwtAuthenticationFilter implements Filter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     public static final String FEATURE_JWT_AUTHENTICATION_PROPERTY = "FEATURE_JWT_AUTHENTICATION";
     // Legacy feature flag for toggling this feature when it was part of blueocean
@@ -46,7 +52,7 @@ public class JwtAuthenticationFilter implements Filter {
         /**
          * Initialize jwt enabled flag by reading FEATURE_JWT_AUTHENTICATION_PROPERTY jvm property
          *
-         * {@link io.jenkins.blueocean.commons.BlueOceanConfigProperties.FEATURE_JWT_AUTHENTICATION} doesn't
+         * {@link io.jenkins.plugin.auth.jwt.commons.BlueOceanConfigProperties.FEATURE_JWT_AUTHENTICATION} doesn't
          * work in certain test scenario - specially when test sets this JVM property to enable JWT but this class has
          * already been loaded setting it to false.
          *
@@ -93,13 +99,21 @@ public class JwtAuthenticationFilter implements Filter {
         }
     }
 
-    private Authentication verifyToken(HttpServletRequest request) {
-        for (JwtTokenVerifier verifier : JwtTokenVerifier.all()) {
-            Authentication token = verifier.verify(request);
-            if (token != null)
-                return token;
+    @VisibleForTesting
+    Authentication verifyToken(HttpServletRequest request) {
+        // Get the token from the request
+        String authHeader = request.getHeader("Authorization");
+        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+            return null;
         }
-        return null;
+        String token = authHeader.substring("Bearer ".length());
+
+        return JwtTokenVerifier.all().stream()
+                .map(verifier -> verifier.getAuthenticationFromToken(token))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

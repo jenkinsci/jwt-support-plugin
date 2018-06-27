@@ -1,4 +1,4 @@
-package io.jenkins.blueocean.commons;
+package io.jenkins.plugin.auth.jwt.commons;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParseException;

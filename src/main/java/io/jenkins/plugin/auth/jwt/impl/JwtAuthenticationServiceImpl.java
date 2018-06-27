@@ -1,14 +1,14 @@
-package io.jenkins.blueocean.auth.jwt.impl;
+package io.jenkins.plugin.auth.jwt.impl;
 
 import hudson.Extension;
 import hudson.Plugin;
 import hudson.model.User;
 import hudson.tasks.Mailer;
-import io.jenkins.blueocean.auth.jwt.JwtAuthenticationService;
-import io.jenkins.blueocean.auth.jwt.JwtAuthenticationStore;
-import io.jenkins.blueocean.auth.jwt.JwtAuthenticationStoreFactory;
-import io.jenkins.blueocean.auth.jwt.JwtToken;
-import io.jenkins.blueocean.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.JwtAuthenticationService;
+import io.jenkins.plugin.auth.jwt.JwtAuthenticationStore;
+import io.jenkins.plugin.auth.jwt.JwtAuthenticationStoreFactory;
+import io.jenkins.plugin.auth.jwt.JwtToken;
+import io.jenkins.plugin.auth.jwt.commons.ServiceException;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.acegisecurity.Authentication;
@@ -61,8 +61,8 @@ public class JwtAuthenticationServiceImpl extends JwtAuthenticationService {
             if(p!=null)
                 email = p.getAddress();
         }
-        Plugin plugin = Jenkins.getInstance().getPlugin("blueocean-jwt");
-        String issuer = "blueocean-jwt:"+ ((plugin!=null) ? plugin.getWrapper().getVersion() : "");
+        Plugin plugin = Jenkins.getInstance().getPlugin("plugin-jwt");
+        String issuer = "plugin-jwt:"+ ((plugin!=null) ? plugin.getWrapper().getVersion() : "");
 
         JwtToken jwtToken = new JwtToken();
         jwtToken.claim.put("jti", UUID.randomUUID().toString().replace("-",""));

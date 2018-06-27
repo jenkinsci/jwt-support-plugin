@@ -1,4 +1,4 @@
-package io.jenkins.blueocean.commons;
+package io.jenkins.plugin.auth.jwt.commons;
 
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
