@@ -1,6 +1,6 @@
 package io.jenkins.blueocean.auth.jwt;
 
-import hudson.ExtensionPoint;
+import io.jenkins.blueocean.commons.JsonConverter;
 import io.jenkins.blueocean.commons.ServiceException;
 import net.sf.json.JSONObject;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 /**
  * Generates JWT token
@@ -23,17 +25,6 @@ import java.util.logging.Logger;
  */
 public class JwtToken implements HttpResponse {
     private static final Logger LOGGER = Logger.getLogger(JwtToken.class.getName());
-
-    /**
-     * {@link JwtToken} is sent as HTTP header of name.
-     */
-    public static final String X_BLUEOCEAN_JWT="X-BLUEOCEAN-JWT";
-
-    /**
-     * JWT header
-     */
-    public final JSONObject header = new JSONObject();
-
 
     /**
      * JWT Claim
@@ -77,13 +68,30 @@ public class JwtToken implements HttpResponse {
 
     /**
      * Writes the token as an HTTP response.
+     * The JWT gets used as an access token, so mimic the OAuth access token response:
+     *  https://tools.ietf.org/html/rfc6749#section-4.1.4
      */
     @Override
     public void generateResponse(StaplerRequest req, StaplerResponse rsp, Object node) throws IOException, ServletException {
-        rsp.setStatus(204);
-        /* https://httpstatuses.com/204 No Content
-        The server has successfully fulfilled the request and
-        that there is no additional content to send in the response payload body */
-        rsp.addHeader(X_BLUEOCEAN_JWT, sign());
+        String access_token = sign();
+
+        int expiresIn = Integer.parseInt(claim.getString("exp")) - Integer.parseInt(claim.getString("iat"));
+        OAuthAccessTokenResponse payload = new OAuthAccessTokenResponse(access_token, expiresIn);
+
+        rsp.setContentType("application/json");
+        rsp.getWriter().write(JsonConverter.toJson(payload));
+    }
+
+    @JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
+    private static final class OAuthAccessTokenResponse {
+        public final String accessToken;
+        public final String tokenType;
+        public final int expiresIn; // seconds
+
+        private OAuthAccessTokenResponse(String accessToken, int expiresIn) {
+            this.accessToken = accessToken;
+            this.tokenType = "bearer";
+            this.expiresIn = expiresIn;
+        }
     }
 }

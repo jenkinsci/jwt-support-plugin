@@ -8,7 +8,6 @@ import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.context.SecurityContextImpl;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.Stapler;
 
 import javax.servlet.Filter;
@@ -60,7 +59,7 @@ public class JwtAuthenticationFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
 
-        if(!shouldApply(request)) {
+        if(!isJwtEnabled) {
             chain.doFilter(req,rsp);
             return;
         }
@@ -101,21 +100,6 @@ public class JwtAuthenticationFilter implements Filter {
                 return token;
         }
         return null;
-    }
-
-    /**
-     * Returns true for requests that JWT token processing should apply.
-     */
-    protected boolean shouldApply(HttpServletRequest req) {
-        if (!isJwtEnabled)
-            return false;
-
-        String path = req.getRequestURI().substring(req.getContextPath().length());
-        if(!StringUtils.isBlank(path)){
-            path = path.replaceAll("//+", "/"); //skip extra slashes
-        }
-        return path.startsWith("/blue/")
-            || path.startsWith("/sse-gateway/");
     }
 
     @Override
