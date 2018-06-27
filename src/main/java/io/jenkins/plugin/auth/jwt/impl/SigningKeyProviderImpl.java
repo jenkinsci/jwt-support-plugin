@@ -5,17 +5,16 @@ import io.jenkins.plugin.auth.jwt.JwtSigningKeyProvider;
 import io.jenkins.plugin.auth.jwt.JwtToken;
 import io.jenkins.plugin.auth.jwt.SigningKey;
 import io.jenkins.plugin.auth.jwt.SigningPublicKey;
-import io.jenkins.plugin.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.commons.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import static java.util.logging.Level.*;
 
 /**
  * Default {@link JwtSigningKeyProvider} that rotates a key over time.

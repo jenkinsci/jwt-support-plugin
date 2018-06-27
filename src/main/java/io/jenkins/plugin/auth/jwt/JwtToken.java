@@ -10,11 +10,11 @@ import org.jose4j.lang.JoseException;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
  * @author Vivek Pandey
  */
 public class JwtToken implements HttpResponse {
-    private static final Logger LOGGER = Logger.getLogger(JwtToken.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtToken.class);
 
     /**
      * JWT Claim
@@ -57,7 +57,7 @@ public class JwtToken implements HttpResponse {
                     return jsonWebSignature.getCompactSerialization();
                 } catch (JoseException e) {
                     String msg = "Failed to sign JWT token: " + e.getMessage();
-                    LOGGER.log(Level.SEVERE, "Failed to sign JWT token", e);
+                    LOGGER.error("Failed to sign JWT token", e);
                     throw new ServiceException.UnexpectedErrorException(msg, e);
                 }
             }
