@@ -1,11 +1,11 @@
 package io.jenkins.blueocean.commons;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Describes JSON based error message.
@@ -29,7 +29,7 @@ public class ErrorMessage {
 
     public final int code;
 
-    public ErrorMessage(@Nonnull Integer code, @Nonnull String message) {
+    public ErrorMessage(@NonNull Integer code, @NonNull String message) {
         this.code=code;
         this.message = message;
     }
