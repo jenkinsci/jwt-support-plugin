@@ -3,7 +3,7 @@ package io.jenkins.plugin.auth.jwt.impl;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import io.jenkins.plugin.auth.jwt.JwtTokenVerifier;
-import io.jenkins.plugin.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.commons.ServiceException;
 import org.acegisecurity.Authentication;
 import org.junit.Before;
 import org.junit.Test;

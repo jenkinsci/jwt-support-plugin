@@ -4,9 +4,8 @@ import java.util.Optional;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import io.jenkins.plugin.auth.jwt.impl.JwtTokenVerifierImpl.JwtAuthentication;
-import io.jenkins.plugin.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.commons.ServiceException;
 import org.acegisecurity.Authentication;
-import org.jose4j.jwx.JsonWebStructure;
 
 /**
  * If an incoming HTTP request contains JWT token, pick that up, verifies the integrity, then

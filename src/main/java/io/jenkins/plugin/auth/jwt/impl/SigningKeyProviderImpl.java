@@ -6,6 +6,7 @@ import io.jenkins.plugin.auth.jwt.JwtToken;
 import io.jenkins.plugin.auth.jwt.SigningKey;
 import io.jenkins.plugin.auth.jwt.SigningPublicKey;
 import io.jenkins.plugin.auth.jwt.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.commons.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

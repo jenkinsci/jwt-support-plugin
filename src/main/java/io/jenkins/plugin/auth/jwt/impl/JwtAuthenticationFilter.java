@@ -8,8 +8,6 @@ import org.acegisecurity.Authentication;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.context.SecurityContextImpl;
-import org.jose4j.jwx.JsonWebStructure;
-import org.jose4j.lang.JoseException;
 import org.kohsuke.stapler.Stapler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +50,7 @@ public class JwtAuthenticationFilter implements Filter {
         /**
          * Initialize jwt enabled flag by reading BLUEOCEAN_FEATURE_JWT_AUTHENTICATION_PROPERTY jvm property
          *
-         * {@link io.jenkins.plugin.commons.BlueOceanConfigProperties.BLUEOCEAN_FEATURE_JWT_AUTHENTICATION} doesn't
+         * {@link io.jenkins.plugin.auth.jwt.commons.BlueOceanConfigProperties.BLUEOCEAN_FEATURE_JWT_AUTHENTICATION} doesn't
          * work in certain test scenario - specially when test sets this JVM property to enable JWT but this class has
          * already been loaded setting it to false.
          *

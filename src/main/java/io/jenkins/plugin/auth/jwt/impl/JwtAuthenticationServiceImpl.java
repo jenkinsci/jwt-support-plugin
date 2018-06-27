@@ -8,7 +8,7 @@ import io.jenkins.plugin.auth.jwt.JwtAuthenticationService;
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationStore;
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationStoreFactory;
 import io.jenkins.plugin.auth.jwt.JwtToken;
-import io.jenkins.plugin.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.commons.ServiceException;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.acegisecurity.Authentication;

@@ -1,4 +1,4 @@
-package io.jenkins.plugin.commons;
+package io.jenkins.plugin.auth.jwt.commons;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package io.jenkins.plugin.auth.jwt;
 
-import io.jenkins.plugin.commons.JsonConverter;
-import io.jenkins.plugin.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.commons.JsonConverter;
+import io.jenkins.plugin.auth.jwt.commons.ServiceException;
 import net.sf.json.JSONObject;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;

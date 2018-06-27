@@ -7,7 +7,7 @@ import io.jenkins.plugin.auth.jwt.JwtAuthenticationStoreFactory;
 import io.jenkins.plugin.auth.jwt.JwtSigningKeyProvider;
 import io.jenkins.plugin.auth.jwt.JwtTokenVerifier;
 import io.jenkins.plugin.auth.jwt.SigningPublicKey;
-import io.jenkins.plugin.commons.ServiceException;
+import io.jenkins.plugin.auth.jwt.commons.ServiceException;
 import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.GrantedAuthority;
@@ -25,8 +25,6 @@ import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.CheckForNull;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
