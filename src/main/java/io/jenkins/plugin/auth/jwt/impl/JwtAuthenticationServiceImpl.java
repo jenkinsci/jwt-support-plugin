@@ -32,6 +32,8 @@ public class JwtAuthenticationServiceImpl extends JwtAuthenticationService {
 
     @Override
     public JwtToken getToken(@Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins, @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
+        // The token endpoint is protected, ie - only issue tokens valid for the authorization strategy
+        Jenkins.getInstance().checkPermission(Jenkins.READ);
         long expiryTime= Long.getLong("EXPIRY_TIME_IN_MINS",DEFAULT_EXPIRY_IN_SEC);
 
         int maxExpiryTime = Integer.getInteger("MAX_EXPIRY_TIME_IN_MINS",DEFAULT_MAX_EXPIRY_TIME_IN_MIN);
