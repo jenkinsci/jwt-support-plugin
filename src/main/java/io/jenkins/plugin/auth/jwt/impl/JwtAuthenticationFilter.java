@@ -104,7 +104,7 @@ public class JwtAuthenticationFilter implements Filter {
     Authentication verifyToken(HttpServletRequest request) {
         // Get the token from the request
         String authHeader = request.getHeader("Authorization");
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+        if(authHeader == null || !authHeader.toLowerCase().startsWith("bearer ")){
             return null;
         }
         String token = authHeader.substring("Bearer ".length());
