@@ -1,15 +1,21 @@
 package io.jenkins.plugin.auth.jwt.impl;
 
+import java.io.IOException;
+
 import hudson.Extension;
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationService;
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationStore;
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationStoreFactory;
-import io.jenkins.plugin.auth.jwt.JwtToken;
+
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugin.auth.jwt.commons.JsonConverter;
 import io.jenkins.plugin.auth.jwt.tokens.JwtGenerator;
 import org.acegisecurity.Authentication;
+import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 import javax.annotation.Nullable;
 
@@ -22,13 +28,15 @@ import javax.annotation.Nullable;
 public class JwtAuthenticationServiceImpl extends JwtAuthenticationService {
 
     @Override
-    public JwtToken getToken(@Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins, @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
-        return JwtGenerator.all()
-                    .stream()
-                    .findFirst()
-                    .map(generator -> generator.getToken(
-                            Jenkins.getAuthentication(), expiryTimeInMins, maxExpiryTimeInMins))
-                    .orElseThrow(() -> new RuntimeException("No JwtGenerators found"));
+    public JwtResponse getToken(@Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins, @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
+        JwtGenerator.OAuthAccessTokenResponse jwtResponse = JwtGenerator
+                .all()
+                .stream()
+                .findFirst()
+                .map(generator -> generator.getToken(Jenkins.getAuthentication(), expiryTimeInMins, maxExpiryTimeInMins))
+                .orElseThrow(() -> new RuntimeException("No JwtGenerators found"));
+
+        return new JwtResponse(jwtResponse);
     }
 
     @Override
@@ -56,6 +64,26 @@ public class JwtAuthenticationServiceImpl extends JwtAuthenticationService {
 
         //none found, lets use SimpleJwtAuthenticationStore
         return jwtAuthenticationStore;
+    }
+
+    public static class JwtResponse implements HttpResponse {
+
+        private final JwtGenerator.OAuthAccessTokenResponse payload;
+
+        public JwtResponse(JwtGenerator.OAuthAccessTokenResponse response) {
+            this.payload = response;
+        }
+
+        /**
+         * Writes the token as an HTTP payload.
+         * The JWT gets used as an access token, so mimic the OAuth access token payload:
+         *  https://tools.ietf.org/html/rfc6749#section-4.1.4
+         */
+        @Override
+        public void generateResponse(StaplerRequest req, StaplerResponse rsp, Object node) throws IOException {
+            rsp.setContentType("application/json");
+            rsp.getWriter().write(JsonConverter.toJson(payload));
+        }
     }
 }
 

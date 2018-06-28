@@ -8,6 +8,8 @@ import org.kohsuke.stapler.verb.GET;
 
 import javax.annotation.Nullable;
 
+import io.jenkins.plugin.auth.jwt.impl.JwtAuthenticationServiceImpl;
+
 /**
  * JWT endpoint resource. Provides functionality to get JWT token and also provides JWK endpoint to get
  * public key using keyId.
@@ -33,8 +35,9 @@ public abstract class JwtAuthenticationService implements UnprotectedRootAction,
      */
     @GET
     @WebMethod(name = "token")
-    public abstract JwtToken getToken(@Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins,
-                                          @Nullable  @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins);
+    public abstract JwtAuthenticationServiceImpl.JwtResponse getToken(
+            @Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins,
+            @Nullable  @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins);
 
     /**
      * Binds Json web key to the URL space.

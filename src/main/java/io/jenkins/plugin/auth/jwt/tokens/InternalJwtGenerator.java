@@ -48,9 +48,20 @@ public class InternalJwtGenerator extends JwtGenerator {
     }
 
     @Override
-    public JwtToken getToken(Authentication authentication,
-                             @Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins,
-                             @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
+    public OAuthAccessTokenResponse getToken(Authentication authentication,
+                                             @Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins,
+                                             @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
+        JwtToken jwtToken = generateJwt(authentication, expiryTimeInMins, maxExpiryTimeInMins);
+        String signedToken = jwtToken.sign();
+
+        int expiresIn = Integer.parseInt(jwtToken.claim.getString("exp")) -
+                        Integer.parseInt(jwtToken.claim.getString("iat"));
+        return new OAuthAccessTokenResponse(signedToken, expiresIn);
+    }
+
+    private JwtToken generateJwt(Authentication authentication,
+                                 @Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins,
+                                 @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
         if(!Jenkins.getInstance().getACL().hasPermission(authentication, Jenkins.READ)) {
             // The token endpoint is protected, ie - only issue tokens valid for the authorization strategy
             throw new AccessDeniedException2(authentication, Jenkins.READ);
@@ -110,7 +121,6 @@ public class InternalJwtGenerator extends JwtGenerator {
 
         context.put("user", userObject);
         jwtToken.claim.put("context", context);
-
         return jwtToken;
     }
 }
