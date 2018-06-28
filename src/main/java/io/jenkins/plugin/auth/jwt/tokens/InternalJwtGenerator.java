@@ -62,11 +62,6 @@ public class InternalJwtGenerator extends JwtGenerator {
     private JwtToken generateJwt(Authentication authentication,
                                  @Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins,
                                  @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
-        if(!Jenkins.getInstance().getACL().hasPermission(authentication, Jenkins.READ)) {
-            // The token endpoint is protected, ie - only issue tokens valid for the authorization strategy
-            throw new AccessDeniedException2(authentication, Jenkins.READ);
-        }
-
         long expiryTime = Long.getLong("EXPIRY_TIME_IN_MINS", DEFAULT_EXPIRY_IN_SEC);
 
         int maxExpiryTime = Integer.getInteger("MAX_EXPIRY_TIME_IN_MINS", DEFAULT_MAX_EXPIRY_TIME_IN_MIN);

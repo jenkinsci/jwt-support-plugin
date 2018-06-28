@@ -3,6 +3,8 @@ package io.jenkins.plugin.auth.jwt.impl;
 import java.io.IOException;
 
 import hudson.Extension;
+import hudson.security.AccessDeniedException2;
+
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationService;
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationStore;
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationStoreFactory;
@@ -29,11 +31,17 @@ public class JwtAuthenticationServiceImpl extends JwtAuthenticationService {
 
     @Override
     public JwtResponse getToken(@Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins, @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
+        Authentication authentication = Jenkins.getAuthentication();
+        if(!Jenkins.getInstance().getACL().hasPermission(authentication, Jenkins.READ)) {
+            // The token endpoint is protected, ie - only issue tokens valid for the authorization strategy
+            throw new AccessDeniedException2(authentication, Jenkins.READ);
+        }
+
         JwtGenerator.OAuthAccessTokenResponse jwtResponse = JwtGenerator
                 .all()
                 .stream()
                 .findFirst()
-                .map(generator -> generator.getToken(Jenkins.getAuthentication(), expiryTimeInMins, maxExpiryTimeInMins))
+                .map(generator -> generator.getToken(authentication, expiryTimeInMins, maxExpiryTimeInMins))
                 .orElseThrow(() -> new RuntimeException("No JwtGenerators found"));
 
         return new JwtResponse(jwtResponse);
