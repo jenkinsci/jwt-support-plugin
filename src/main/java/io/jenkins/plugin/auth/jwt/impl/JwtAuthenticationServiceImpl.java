@@ -1,22 +1,25 @@
 package io.jenkins.plugin.auth.jwt.impl;
 
+import java.io.IOException;
+
 import hudson.Extension;
-import hudson.Plugin;
-import hudson.model.User;
-import hudson.tasks.Mailer;
+import hudson.security.AccessDeniedException2;
+
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationService;
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationStore;
 import io.jenkins.plugin.auth.jwt.JwtAuthenticationStoreFactory;
-import io.jenkins.plugin.auth.jwt.JwtToken;
-import io.jenkins.plugin.auth.jwt.commons.ServiceException;
+
 import jenkins.model.Jenkins;
-import net.sf.json.JSONObject;
+
+import io.jenkins.plugin.auth.jwt.commons.JsonConverter;
+import io.jenkins.plugin.auth.jwt.tokens.JwtGenerator;
 import org.acegisecurity.Authentication;
+import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.UUID;
 
 /**
  * Default implementation of {@link JwtAuthenticationService}
@@ -26,70 +29,22 @@ import java.util.UUID;
 @Extension
 public class JwtAuthenticationServiceImpl extends JwtAuthenticationService {
 
-    private static int DEFAULT_EXPIRY_IN_SEC = 1800;
-    private static int DEFAULT_MAX_EXPIRY_TIME_IN_MIN = 480;
-    private static int DEFAULT_NOT_BEFORE_IN_SEC = 30;
-
     @Override
-    public JwtToken getToken(@Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins, @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
-        long expiryTime= Long.getLong("EXPIRY_TIME_IN_MINS",DEFAULT_EXPIRY_IN_SEC);
-
-        int maxExpiryTime = Integer.getInteger("MAX_EXPIRY_TIME_IN_MINS",DEFAULT_MAX_EXPIRY_TIME_IN_MIN);
-
-        if(maxExpiryTimeInMins != null){
-            maxExpiryTime = maxExpiryTimeInMins;
-        }
-        if(expiryTimeInMins != null){
-            if(expiryTimeInMins > maxExpiryTime) {
-                throw new ServiceException.BadRequestException(
-                    String.format("expiryTimeInMins %s can't be greater than %s", expiryTimeInMins, maxExpiryTime));
-            }
-            expiryTime = expiryTimeInMins * 60;
-        }
-
+    public JwtResponse getToken(@Nullable @QueryParameter("expiryTimeInMins") Integer expiryTimeInMins, @Nullable @QueryParameter("maxExpiryTimeInMins") Integer maxExpiryTimeInMins) {
         Authentication authentication = Jenkins.getAuthentication();
-
-        String userId = authentication.getName();
-
-        User user = User.get(userId, false, Collections.emptyMap());
-        String email = null;
-        String fullName = null;
-        if(user != null) {
-            fullName = user.getFullName();
-            userId = user.getId();
-            Mailer.UserProperty p = user.getProperty(Mailer.UserProperty.class);
-            if(p!=null)
-                email = p.getAddress();
+        if(!Jenkins.getInstance().getACL().hasPermission(authentication, Jenkins.READ)) {
+            // The token endpoint is protected, ie - only issue tokens valid for the authorization strategy
+            throw new AccessDeniedException2(authentication, Jenkins.READ);
         }
-        Plugin plugin = Jenkins.getInstance().getPlugin("plugin-jwt");
-        String issuer = "plugin-jwt:"+ ((plugin!=null) ? plugin.getWrapper().getVersion() : "");
 
-        JwtToken jwtToken = new JwtToken();
-        jwtToken.claim.put("jti", UUID.randomUUID().toString().replace("-",""));
-        jwtToken.claim.put("iss", issuer);
-        jwtToken.claim.put("sub", userId);
-        jwtToken.claim.put("name", fullName);
-        long currentTime = System.currentTimeMillis()/1000;
-        jwtToken.claim.put("iat", currentTime);
-        jwtToken.claim.put("exp", currentTime+expiryTime);
-        jwtToken.claim.put("nbf", currentTime - DEFAULT_NOT_BEFORE_IN_SEC);
+        JwtGenerator.OAuthAccessTokenResponse jwtResponse = JwtGenerator
+                .all()
+                .stream()
+                .findFirst()
+                .map(generator -> generator.getToken(authentication, expiryTimeInMins, maxExpiryTimeInMins))
+                .orElseThrow(() -> new RuntimeException("No JwtGenerators found"));
 
-        //set claim
-        JSONObject context = new JSONObject();
-
-        JSONObject userObject = new JSONObject();
-        userObject.put("id", userId);
-        userObject.put("fullName", fullName);
-        userObject.put("email", email);
-
-        JwtAuthenticationStore authenticationStore = getJwtStore(authentication);
-
-        authenticationStore.store(authentication, context);
-
-        context.put("user", userObject);
-        jwtToken.claim.put("context", context);
-
-        return jwtToken;
+        return new JwtResponse(jwtResponse);
     }
 
     @Override
@@ -117,6 +72,26 @@ public class JwtAuthenticationServiceImpl extends JwtAuthenticationService {
 
         //none found, lets use SimpleJwtAuthenticationStore
         return jwtAuthenticationStore;
+    }
+
+    public static class JwtResponse implements HttpResponse {
+
+        private final JwtGenerator.OAuthAccessTokenResponse payload;
+
+        public JwtResponse(JwtGenerator.OAuthAccessTokenResponse response) {
+            this.payload = response;
+        }
+
+        /**
+         * Writes the token as an HTTP payload.
+         * The JWT gets used as an access token, so mimic the OAuth access token payload:
+         *  https://tools.ietf.org/html/rfc6749#section-4.1.4
+         */
+        @Override
+        public void generateResponse(StaplerRequest req, StaplerResponse rsp, Object node) throws IOException {
+            rsp.setContentType("application/json");
+            rsp.getWriter().write(JsonConverter.toJson(payload));
+        }
     }
 }
 
