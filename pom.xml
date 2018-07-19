@@ -9,6 +9,7 @@
         <version>3.6</version>
     </parent>
 
+    <groupId>io.jenkins.plugins</groupId>
     <artifactId>jwt-support</artifactId>
     <version>0.5-SNAPSHOT</version>
     <packaging>hpi</packaging>
