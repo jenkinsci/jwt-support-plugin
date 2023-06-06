@@ -1,6 +1,6 @@
 package io.jenkins.plugin.auth.jwt.impl;
 
-import com.gargoylesoftware.htmlunit.Page;
+import org.htmlunit.Page;
 import hudson.model.User;
 import hudson.tasks.Mailer;
 import net.sf.json.JSONObject;
